@@ -10,6 +10,7 @@ const autoregister = require('./autoregister');
 const partitiontools = require('./partitiontools');
 const backup = require('./backup');
 const claudeHelper = require('./claude-helper');
+const btrfsConvert = require('./btrfs-convert');
 
 // Configure AI features
 async function configureAI() {
@@ -178,6 +179,7 @@ async function mainMenu() {
         new inquirer.Separator(),
         { name: 'Backup & Restore', value: 'backup' },
         { name: 'Disk Maintenance & Health', value: 'maintenance' },
+        { name: '🔄 BTRFS Conversion (ext4 → BTRFS)', value: 'btrfs' },
         new inquirer.Separator(),
         { name: '⚙️  Configure AI features', value: 'configure' },
         new inquirer.Separator(),
@@ -223,6 +225,9 @@ async function mainMenu() {
             break;
         case 'maintenance':
             await maintenanceMenu();
+            break;
+        case 'btrfs':
+            await btrfsMenu();
             break;
         case 'configure':
             await configureAI();
@@ -1168,6 +1173,73 @@ async function managePartition(detected) {
             if (target) {
                 await partitiontools.clonePartition(partition.device, target);
             }
+            break;
+    }
+
+    await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+}
+
+// BTRFS conversion menu
+async function btrfsMenu() {
+    const chalk = require('chalk');
+
+    display.displayHeader('BTRFS Conversion');
+
+    if (!btrfsConvert.isAvailable()) {
+        display.displayError('btrfs-progs is not installed!');
+        console.log(chalk.yellow('\nInstall with: sudo apt install btrfs-progs\n'));
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return...' }]);
+        return;
+    }
+
+    const detected = detect.detectDrives();
+    const partitions = detected.filter(d => d.type === 'part' && d.fstype);
+
+    if (partitions.length === 0) {
+        display.displayInfo('No partitions detected.');
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return...' }]);
+        return;
+    }
+
+    const choices = [
+        { name: chalk.bold('Convert ext4 → BTRFS'), value: 'convert' },
+        { name: 'Rollback BTRFS → ext4', value: 'rollback' },
+        { name: 'Delete rollback image (make permanent)', value: 'delete_saved' },
+        new inquirer.Separator(),
+        { name: 'Back to main menu', value: 'back' }
+    ];
+
+    const { action } = await inquirer.prompt([{
+        type: 'list',
+        name: 'action',
+        message: 'What would you like to do?',
+        choices
+    }]);
+
+    if (action === 'back') return;
+
+    // Select partition
+    const partitionChoices = partitions.map(p => ({
+        name: `${p.device} - ${p.fstype} (${p.size}) ${p.label ? '- ' + p.label : ''} ${p.mountpoint ? '@ ' + p.mountpoint : ''}`,
+        value: p.device
+    }));
+
+    const { device } = await inquirer.prompt([{
+        type: 'list',
+        name: 'device',
+        message: 'Select partition:',
+        choices: partitionChoices
+    }]);
+
+    switch (action) {
+        case 'convert':
+            await btrfsConvert.convertToBtrfs(device);
+            break;
+        case 'rollback':
+            await btrfsConvert.rollbackToExt4(device);
+            break;
+        case 'delete_saved':
+            await btrfsConvert.deleteSavedImage(device);
             break;
     }
 

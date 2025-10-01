@@ -17,6 +17,7 @@ A powerful, user-friendly CLI tool for managing USB drives, SD cards, and extern
 - **Backup & Restore** - 4 powerful methods (dd, tar, rsync, btrfs snapshots)
 - **Cloud backup** - Upload to S3-compatible storage (AWS, Backblaze, DigitalOcean, Wasabi)
 - **Clone with auto-resize** - Clone bootable drives to larger targets with automatic partition expansion
+- **BTRFS Conversion** - Convert ext4 to BTRFS with full rollback safety, ARM64 optimized
 
 ### 🤖 AI-Powered (Optional)
 - **Semantic search** - Find drives using natural language ("my backup drive")
@@ -163,6 +164,12 @@ See [SUDO_SETUP.md](SUDO_SETUP.md) for detailed setup information.
   - **Format partition** - Reformat with filesystem selection (ext4, btrfs, xfs, vfat, ntfs)
   - **Resize partition** - Grow/shrink partitions with filesystem-specific commands
   - **Set label** - Change partition labels
+- **BTRFS Conversion** - Professional-grade filesystem migration
+  - **Convert ext4 → BTRFS** - In-place conversion with data preservation
+  - **Full rollback support** - Revert to ext4 if needed (keeps original as snapshot)
+  - **ARM64 optimized** - Automatic 16KB blocksize for Raspberry Pi compatibility
+  - **Safety features** - Filesystem checks, unmount verification, backup reminders
+  - **Make permanent** - Delete rollback snapshot to reclaim space
 
 ## Storage
 
@@ -229,6 +236,18 @@ dm
 → Search drives
 → AI search: "my plex movies"
 ✓ Found: sdb1 - Media Storage
+```
+
+### Scenario 4: Migrate to BTRFS for Better Snapshots
+```bash
+dm
+→ BTRFS Conversion
+→ Convert ext4 → BTRFS
+→ Select: sdb1 (USB backup drive)
+✓ Converted with rollback safety
+→ Test your data
+→ Delete rollback image (make permanent)
+✓ Now enjoying instant snapshots!
 ```
 
 ## 📊 System Requirements
