@@ -1,0 +1,33 @@
+{
+  "name": "diskmgt",
+  "version": "1.0.0",
+  "description": "Interactive CLI for managing and tracking drives",
+  "main": "index.js",
+  "bin": {
+    "diskmgt": "./index.js",
+    "dm": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "cli",
+    "drives",
+    "disk",
+    "management"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.11.0",
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "figlet": "^1.9.3",
+    "gradient-string": "^3.0.0",
+    "inquirer": "^8.2.5"
+  }
+}

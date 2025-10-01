@@ -1,0 +1,32 @@
+#!/bin/bash
+# dm-sudo wrapper - Runs diskmgt with sudo while preserving user environment
+
+# Check if already running as root
+if [ "$EUID" -eq 0 ]; then
+    # Already root, check if we have SUDO_USER to know the original user
+    if [ -n "$SUDO_USER" ]; then
+        ORIGINAL_USER="$SUDO_USER"
+        ORIGINAL_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+    else
+        # Running as actual root, use root's config
+        ORIGINAL_USER="root"
+        ORIGINAL_HOME="/root"
+    fi
+
+    # Run with original user's config directory and API key
+    HOME="$ORIGINAL_HOME" \
+    ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY}" \
+    node /home/pi/dev/diskmgt/index.js "$@"
+else
+    # Not root, save current user's environment
+    REAL_USER="$USER"
+    REAL_HOME="$HOME"
+    REAL_API_KEY="${ANTHROPIC_API_KEY}"
+
+    # Run with sudo, passing environment variables
+    exec sudo \
+        HOME="$REAL_HOME" \
+        ANTHROPIC_API_KEY="$REAL_API_KEY" \
+        SUDO_USER="$REAL_USER" \
+        "$0" "$@"
+fi
