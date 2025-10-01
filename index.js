@@ -1,5 +1,33 @@
 #!/usr/bin/env node
 
+// Handle CLI arguments
+const args = process.argv.slice(2);
+
+if (args.includes('--version') || args.includes('-v')) {
+    const pkg = require('./package.json');
+    console.log(`diskmgt v${pkg.version}`);
+    process.exit(0);
+}
+
+if (args.includes('--help') || args.includes('-h')) {
+    const chalk = require('chalk');
+    console.log(chalk.bold('\nDiskMgt - Smart Drive Manager for Raspberry Pi\n'));
+    console.log('Usage: diskmgt [options]\n');
+    console.log('Options:');
+    console.log('  --version, -v     Show version number');
+    console.log('  --help, -h        Show this help message');
+    console.log('  --health          Show drive health dashboard');
+    console.log('\nWithout arguments, launches interactive menu.\n');
+    console.log('GitHub: https://github.com/nfodor/diskmgt\n');
+    process.exit(0);
+}
+
+if (args.includes('--health')) {
+    const health = require('./health');
+    health.displayHealthDashboard();
+    process.exit(0);
+}
+
 const inquirer = require('inquirer');
 const storage = require('./storage');
 const detect = require('./detect');
@@ -181,6 +209,7 @@ async function mainMenu() {
         { name: 'Backup & Restore', value: 'backup' },
         { name: 'Disk Maintenance & Health', value: 'maintenance' },
         { name: '🔄 BTRFS Conversion (ext4 → BTRFS)', value: 'btrfs' },
+        { name: '💊 Drive Health Dashboard', value: 'health' },
         new inquirer.Separator(),
         { name: '⚙️  Configure AI features', value: 'configure' },
         new inquirer.Separator(),
@@ -229,6 +258,11 @@ async function mainMenu() {
             break;
         case 'btrfs':
             await btrfsMenu();
+            break;
+        case 'health':
+            const health = require('./health');
+            health.displayHealthDashboard();
+            await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
             break;
         case 'configure':
             await configureAI();

@@ -30,6 +30,13 @@ A powerful, user-friendly CLI tool for managing USB drives, SD cards, and extern
 - Space analysis (find largest directories)
 - System log analysis for drive-related issues
 
+### 💊 Drive Health Dashboard
+- **Real-time SMART monitoring** - Health status, temperature, wear level
+- **Power-on hours** - Track drive age and usage
+- **Color-coded warnings** - Instant visual health indicators
+- **CLI quick check** - `dm --health` for instant overview
+- **Proactive alerts** - Warnings for failing drives, high temps, wear
+
 ### 🖥️ QEMU Drive Testing
 - **Boot in emulator** - Boot any drive in QEMU without mounting on host
 - **Read-only mode** - Safe inspection without writing changes
@@ -57,6 +64,16 @@ A powerful, user-friendly CLI tool for managing USB drives, SD cards, and extern
 
 ### Installation
 
+**Option 1: NPM (Recommended)**
+```bash
+# Install globally
+npm install -g diskmgt
+
+# Run immediately
+dm
+```
+
+**Option 2: From Source**
 ```bash
 # Clone the repository
 git clone https://github.com/nfodor/diskmgt.git

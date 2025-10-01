@@ -1,7 +1,7 @@
 {
   "name": "diskmgt",
   "version": "1.0.0",
-  "description": "Interactive CLI for managing and tracking drives",
+  "description": "Smart drive manager for Raspberry Pi - Auto-labeling, BTRFS conversion, QEMU testing, backup/restore, AI search",
   "main": "index.js",
   "bin": {
     "diskmgt": "./index.js",
@@ -12,13 +12,35 @@
     "test": "node test.js"
   },
   "keywords": [
+    "raspberry-pi",
+    "raspbian",
+    "disk-management",
+    "drive-manager",
+    "btrfs",
+    "backup",
+    "restore",
+    "qemu",
+    "lxd",
+    "storage",
     "cli",
-    "drives",
-    "disk",
-    "management"
+    "arm64"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "nfodor",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nfodor/diskmgt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nfodor/diskmgt/issues"
+  },
+  "homepage": "https://github.com/nfodor/diskmgt#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": ["linux"],
+  "cpu": ["arm64", "arm"],
+  "preferGlobal": true,
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
     "blessed": "^0.1.81",
