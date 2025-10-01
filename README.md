@@ -30,6 +30,13 @@ A powerful, user-friendly CLI tool for managing USB drives, SD cards, and extern
 - Space analysis (find largest directories)
 - System log analysis for drive-related issues
 
+### 🖥️ QEMU Drive Testing
+- **Boot in emulator** - Boot any drive in QEMU without mounting on host
+- **Read-only mode** - Safe inspection without writing changes
+- **Network support** - SSH access via port forwarding (5555 → 22)
+- **Automatic detection** - Extracts kernel and device tree from boot partition
+- **Safety first** - Test unknown drives in isolation before mounting
+
 ## 🎯 Perfect For
 
 - **Media servers** (Plex, Jellyfin, Kodi) - Track your movie/music drives
@@ -248,6 +255,19 @@ dm
 → Test your data
 → Delete rollback image (make permanent)
 ✓ Now enjoying instant snapshots!
+```
+
+### Scenario 5: Test Unknown Drive Safely
+```bash
+dm
+→ Detailed disk information panel
+→ Select: sdc (mysterious USB drive)
+→ Boot this drive in QEMU
+→ Read-only mode (safe inspection)
+✓ Booted in isolated emulator
+→ Inspect files, check for malware
+→ Exit QEMU (Ctrl+A then X)
+✓ Host system untouched!
 ```
 
 ## 📊 System Requirements

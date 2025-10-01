@@ -11,6 +11,7 @@ const partitiontools = require('./partitiontools');
 const backup = require('./backup');
 const claudeHelper = require('./claude-helper');
 const btrfsConvert = require('./btrfs-convert');
+const qemuBoot = require('./qemu-boot');
 
 // Configure AI features
 async function configureAI() {
@@ -326,7 +327,27 @@ async function showDetailedDiskInfo() {
     const info = diskinfo.getDetailedDiskInfo(selectedDisk);
     diskinfo.displayDetailedDiskInfo(info);
 
-    await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+    // Offer QEMU boot option for bootable drives
+    const chalk = require('chalk');
+    const actionChoices = [];
+
+    if (qemuBoot.isAvailable()) {
+        actionChoices.push({ name: '🚀 Boot this drive in QEMU (test without mounting)', value: 'qemu' });
+        actionChoices.push(new inquirer.Separator());
+    }
+
+    actionChoices.push({ name: 'Back to main menu', value: 'back' });
+
+    const { action } = await inquirer.prompt([{
+        type: 'list',
+        name: 'action',
+        message: 'What would you like to do?',
+        choices: actionChoices
+    }]);
+
+    if (action === 'qemu') {
+        await qemuBoot.bootInQemu(selectedDisk);
+    }
 }
 
 // Add new drive
