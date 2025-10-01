@@ -226,6 +226,7 @@ async function mainMenu() {
         { name: 'Disk Maintenance & Health', value: 'maintenance' },
         { name: '🔄 BTRFS Conversion (ext4 → BTRFS)', value: 'btrfs' },
         { name: '💊 Drive Health Dashboard', value: 'health' },
+        { name: '🚀 Boot Raspberry Pi drive in QEMU', value: 'qemu' },
         new inquirer.Separator(),
         { name: '⚙️  Configure AI features', value: 'configure' },
         new inquirer.Separator(),
@@ -279,6 +280,9 @@ async function mainMenu() {
             const health = require('./health');
             health.displayHealthDashboard();
             await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+            break;
+        case 'qemu':
+            await qemuBootMenu();
             break;
         case 'configure':
             await configureAI();
@@ -1315,6 +1319,89 @@ async function btrfsMenu() {
     }
 
     await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+}
+
+// QEMU boot menu
+async function qemuBootMenu() {
+    const chalk = require('chalk');
+
+    display.displayHeader('Boot Raspberry Pi Drive in QEMU');
+
+    if (!qemuBoot.isAvailable()) {
+        display.displayError('QEMU ARM64 emulator not installed!');
+        console.log(chalk.yellow('\nInstall with: sudo apt install qemu-system-arm\n'));
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return...' }]);
+        return;
+    }
+
+    const detected = detect.detectDrives();
+    const disks = detected.filter(d => d.type === 'disk');
+
+    if (disks.length === 0) {
+        display.displayInfo('No disk drives detected.');
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return...' }]);
+        return;
+    }
+
+    // Check for bootable drives (those with boot partition or Raspberry Pi OS)
+    const bootableDrives = [];
+    disks.forEach(disk => {
+        // Check if disk has partitions
+        const diskPartitions = detected.filter(d =>
+            d.type === 'part' &&
+            d.device.startsWith(disk.device)
+        );
+
+        // Look for boot partition (vfat) or root partition (ext4/btrfs)
+        const hasBootPart = diskPartitions.some(p => p.fstype === 'vfat');
+        const hasRootPart = diskPartitions.some(p => p.fstype === 'ext4' || p.fstype === 'btrfs');
+        const isBootable = hasBootPart || hasRootPart;
+
+        bootableDrives.push({
+            device: disk.device,
+            name: disk.name,
+            model: disk.model,
+            size: disk.size,
+            bootable: isBootable,
+            label: isBootable ? '✓ Bootable' : 'Not bootable'
+        });
+    });
+
+    console.log(chalk.cyan('Detected drives:\n'));
+    bootableDrives.forEach(d => {
+        const icon = d.bootable ? chalk.green('✓') : chalk.dim('-');
+        console.log(`  ${icon} ${d.name} (${d.size}) - ${d.model || 'Unknown'} - ${d.label}`);
+    });
+    console.log('');
+
+    const drivesWithBootable = bootableDrives.filter(d => d.bootable);
+    if (drivesWithBootable.length === 0) {
+        display.displayInfo('No bootable Raspberry Pi drives detected.');
+        console.log(chalk.yellow('Bootable drives need either:\n'));
+        console.log(chalk.yellow('  • Boot partition (vfat) with kernel'));
+        console.log(chalk.yellow('  • Root partition (ext4/btrfs) with OS\n'));
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return...' }]);
+        return;
+    }
+
+    const choices = drivesWithBootable.map(d => ({
+        name: `${d.name} (${d.size}) - ${d.model || 'Unknown'} - ${chalk.green(d.label)}`,
+        value: d.device
+    }));
+
+    choices.push(new inquirer.Separator());
+    choices.push({ name: 'Back to main menu', value: null });
+
+    const { device } = await inquirer.prompt([{
+        type: 'list',
+        name: 'device',
+        message: 'Select drive to boot in QEMU:',
+        choices
+    }]);
+
+    if (!device) return;
+
+    await qemuBoot.bootInQemu(device);
 }
 
 // Start the application
