@@ -177,6 +177,22 @@ async function showHelp() {
         '• Format part       - ext4, btrfs, xfs, ntfs\n' +
         '• Resize part       - Grow/shrink filesystem\n' +
         '• Set label         - Change partition label\n\n' +
+        chalk.bold('BTRFS CONVERSION:\n') +
+        '• Convert to BTRFS  - ext4 → BTRFS in-place\n' +
+        '• Full rollback     - Revert to ext4 safely\n' +
+        '• ARM64 optimized   - 16KB blocksize support\n' +
+        '• Delete rollback   - Make conversion permanent\n\n' +
+        chalk.bold('DRIVE HEALTH:\n') +
+        '• Health dashboard  - SMART status overview\n' +
+        '• Temperature       - Real-time monitoring\n' +
+        '• Wear level        - SSD health tracking\n' +
+        '• Power-on hours    - Drive age and usage\n' +
+        '• CLI: dm --health  - Quick health check\n\n' +
+        chalk.bold('QEMU TESTING:\n') +
+        '• Boot in emulator  - Test drives safely\n' +
+        '• Read-only mode    - Inspect without changes\n' +
+        '• Network support   - SSH via port 5555\n' +
+        '• Auto-detection    - Kernel + device tree\n\n' +
         chalk.bold('AUTO-REGISTRATION:\n') +
         'Smart: LXD, OS installs, boot, mounts\n\n' +
         chalk.bold('STORAGE:\n') +
