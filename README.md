@@ -51,7 +51,7 @@ A powerful, user-friendly CLI tool for managing USB drives, SD cards, and extern
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/diskmgt.git
+git clone https://github.com/nfodor/diskmgt.git
 cd diskmgt
 
 # Install dependencies
@@ -297,13 +297,12 @@ MIT License - See LICENSE file for details
 ## 🐛 Known Issues
 
 - **LXD detection**: Requires running containers to detect storage pools
-- **Chromium keyring**: See [CHROME_FIX.md](CHROME_FIX.md) for browser fix
 - **Large operations**: May take time on Pi Zero/3
 
 ## 📞 Support
 
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/diskmgt/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/diskmgt/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/nfodor/diskmgt/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/nfodor/diskmgt/discussions)
 
 ## 🗺️ Roadmap
 
